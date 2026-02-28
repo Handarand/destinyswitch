@@ -13,8 +13,8 @@
             --green: #00ff66;
             --yellow: #ffcc00;
             --accent: #9966ff;
-            --grey-btn: #222;
-            --grey-text: #555;
+            --grey-btn: #1a1a1a;
+            --grey-text: #444;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -31,14 +31,14 @@
         }
         .lang-switch { position: fixed; top: 15px; right: 15px; z-index: 100; }
         .lang-btn {
-            background: #1a1a1a;
-            color: #444;
-            border: 1px solid #333;
+            background: #111;
+            color: #333;
+            border: 1px solid #222;
             padding: 6px 12px;
             margin-left: 5px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
         
@@ -57,9 +57,9 @@
             transition: all 0.2s;
         }
         .choice-btn:active { transform: scale(0.97); }
-        .sub-desc { display: block; font-size: 0.85rem; color: #666; margin-top: 8px; font-weight: 400; }
+        .sub-desc { display: block; font-size: 0.85rem; color: #555; margin-top: 8px; font-weight: 400; }
         
-        .summary { font-size: 0.75rem; color: #444; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        .summary { font-size: 0.7rem; color: #333; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; height: 1.2rem;}
         
         #result-container {
             padding: 35px 25px;
@@ -70,14 +70,14 @@
             display: none;
             box-shadow: 0 15px 50px rgba(0,0,0,0.8);
         }
-        .short-name { color: #555; font-size: 0.9rem; font-style: italic; display: block; margin-top: 4px; }
+        .short-name { color: #444; font-size: 0.9rem; font-style: italic; display: block; margin-top: 4px; }
         .result-val { font-size: 1.8rem; margin: 20px 0; display: block; font-weight: 900; letter-spacing: 1px; }
         
         .symbol-red { border-bottom: 2px solid var(--red) !important; color: var(--red); }
         .symbol-green { border-bottom: 2px solid var(--green) !important; color: var(--green); }
         .symbol-yellow { border-bottom: 2px solid var(--yellow) !important; color: var(--yellow); }
         
-        h1 { font-size: 1.6rem; margin-bottom: 30px; font-weight: 300; color: #eee; }
+        h1 { font-size: 1.5rem; margin-bottom: 30px; font-weight: 300; color: #eee; }
         .hidden { display: none !important; }
         #symbols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 380px; }
         #symbols-grid button { padding: 18px 10px; font-size: 1rem; }
@@ -85,15 +85,17 @@
         .restart-btn {
             background: var(--grey-btn);
             color: var(--grey-text);
-            border: 1px solid #333;
-            padding: 8px 16px;
-            margin-top: 40px;
-            border-radius: 8px;
+            border: 1px solid #222;
+            padding: 6px 14px;
+            margin-top: 50px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             width: auto;
-            display: inline-block;
-            transition: opacity 0.5s ease;
+            display: none;
+            transition: opacity 0.8s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -132,11 +134,11 @@
     </div>
 
     <div id="result-container">
-        <h2 id="res-mode-name" style="margin: 0; font-size: 1.4rem;"></h2>
+        <h2 id="res-mode-name" style="margin: 0; font-size: 1.4rem; font-weight: 500;"></h2>
         <span class="short-name" id="res-short-name"></span>
         <div style="height: 1px; background: #222; margin: 25px 0;"></div>
         <span id="res-symbol-val" class="result-val"></span>
-        <p id="res-desc" style="line-height: 1.8; font-size: 1.05rem; text-align: left; color: #bbb;"></p>
+        <p id="res-desc" style="line-height: 1.8; font-size: 1.05rem; text-align: left; color: #888;"></p>
         <button class="restart-btn" onclick="reset()" id="btn-restart">Restart</button>
     </div>
 
@@ -152,24 +154,24 @@
                     jungle: { name: "Jungle Archetype", desc: "discover your primal need", short: "(primal need)" }
                 },
                 symbols: { 
-                    flame: "Flame", sword: "Sword", mouth: "Mouth", heart: "Heart in a hand",
+                    flame: "Flame", sword: "Sword", mouth: "Mouth", heart: "Heart in hand",
                     eye: "Eye", key: "Key", flower: "Flower", snake: "Snake", wings: "Wings", sun: "Sun"
                 },
                 content: {
                     flame: { faith: "Hell: Suffering and despair.", destiny: "The Path of Rebirth: old burns down so new can come.", drug: "The Incinerator: Burn away your attachments.", jungle: "The Fire-Seeker: Warmth and safety." },
                     sword: { faith: "Asura: Your mind is occupied by ego and competition.", destiny: "The Path of Conquest: Taking what is yours.", drug: "The Adrenaline: Cut the hesitation.", jungle: "The Alpha: Defend the territory." },
-                    mouth: { faith: "Hunger: You are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Predator: To hunt." },
-                    hand: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Solve it with empathy.", jungle: "The Matriarch: to nurture the pack." },
+                    mouth: { faith: "Hunger: Your are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Predator: To hunt." },
+                    heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Solve it with empathy.", jungle: "The Matriarch: to nurture the pack." },
                     eye: { faith: "Learning: Seeking truth through the teachings of others.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Microdose: Heightened pattern recognition and focus.", jungle: "The Sentinel: To watch and wait from the canopy." },
                     key: { faith: "Humanity: A state of balance and reason.", destiny: "The Path of Opportunity: Unlocking new doors with logic.", drug: "The Nootropic: Using clarity as your primary tool.", jungle: "The Tool-User: To solve the puzzle of survival." },
-                    flower: { faith: "Realization: Truth through solitary intuition.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Dissolving the ego to see the whole.", jungle: "The Forest-Walker: To blend seamlessly with the environment." },
-                    snake: { faith: "Animality: Instinctual life.", destiny: "The Path of Survival: Low profile to stay safe.", drug: "The Sedative: Stop overthinking and just exist.", jungle: "The Coiled Hunter: To rest until the moment to strike." },
-                    wings: { faith: "Heaven: Fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos.", drug: "The Euphoric: Focusing entirely on the peak experience.", jungle: "The Scout: To gain perspective from the highest point." },
+                    flower: { faith: "Realization: Truth found through solitary intuition.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Dissolving the ego to see the whole.", jungle: "The Forest-Walker: To blend seamlessly with the environment." },
+                    snake: { faith: "Animality: Instinctual life.", destiny: "The Path of Survival: Keep a low profile to stay safe.", drug: "The Sedative: Stop overthinking and just exist.", jungle: "The Coiled Hunter: To rest until the moment to strike." },
+                    wings: { faith: "Heaven: Fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos of the world.", drug: "The Euphoric: Focusing entirely on the peak experience.", jungle: "The Scout: To gain perspective from the highest point." },
                     sun: { faith: "Buddhahood: Absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light that guides itself.", drug: "The Limitless: Realizing you are already the solution.", jungle: "The Solar King: To simply exist as the source." }
                 }
             },
             ua: {
-                titles: { modes: "Оберіть Режим", symbols: "Оберіть Символ", restart: "Перезапуск" },
+                titles: { modes: "Оберіть Режим", symbols: "Оберіть Символ", restart: "Заново" },
                 modes: {
                     faith: { name: "Зсув Віри", desc: "куди прямує твій розум", short: "(світ)" },
                     destiny: { name: "Перемикач Долі", desc: "зміни свою долю", short: "(шлях)" },
@@ -187,7 +189,7 @@
                     heart: { faith: "Бодхісаттва: Твій розум сповнений співчуття.", destiny: "Шлях Вартового: Доля — захищати інших.", drug: "Окситоцин: Вирішуй емпатією.", jungle: "Матріарх: Піклуйся про зграю." },
                     eye: { faith: "Навчання: Шукаєш істину через вчення інших.", destiny: "Шлях Вченого: Спостерігай за паттернами.", drug: "Мікродозинг: Загострене розпізнавання образів.", jungle: "Вартовий: Спостерігай і чекай." },
                     key: { faith: "Людяність: Стан балансу та розуму.", destiny: "Шлях Можливостей: Нові двері логікою.", drug: "Ноотроп: Використання ясності.", jungle: "Майстер: Виріши пазл виживання." },
-                    flower: { faith: "Усвідомлення: Істина через інтуїцію.", destiny: "Шлях Пробудження: Дозволь істині розквітнути.", drug: "Психоделік: Розчини его.", jungle: "Мандрівник: Злийся з оточенням безслідно." },
+                    flower: { faith: "Усвідомлення: Істина через інтуїцію.", destiny: "Шлях Пробудження: Дозволь істині розквітнути.", drug: "Психоделік: Розчиниего.", jungle: "Мандрівник: Злийся з оточенням безслідно." },
                     snake: { faith: "Тваринність: Керований інстинктом.", destiny: "Шлях Виживання: Не виділяйся.", drug: "Седатив: Перестань думати, просто будь.", jungle: "Змія: Відпочивай до моменту удару." },
                     wings: { faith: "Небеса: Крихка радість.", destiny: "Шлях Сходження: Піднімись над хаосом світу.", drug: "Ейфорік: Фокусуйся лише на піку.", jungle: "Скаут: Бач ширше з висоти." },
                     sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти і є рішення.", jungle: "Сонячний Король: Просто будь джерелом." }
@@ -239,14 +241,13 @@
             document.getElementById('res-desc').innerText = db[curLang].content[s][curMode];
             updateSummary();
 
-            // Handle Restart Button Fade Out
             const btn = document.getElementById('btn-restart');
             btn.style.opacity = '1';
             btn.style.display = 'inline-block';
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
                 btn.style.opacity = '0';
-                setTimeout(() => { if(btn.style.opacity === '0') btn.style.display = 'none'; }, 500);
+                setTimeout(() => { if(btn.style.opacity === '0') btn.style.display = 'none'; }, 800);
             }, 10000);
         }
 
@@ -267,4 +268,3 @@
     </script>
 </body>
 </html>
-
