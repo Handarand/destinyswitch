@@ -11,6 +11,7 @@
             --red: #ff4d4d;
             --green: #4dff88;
             --yellow: #ffeb3b;
+            --accent: #bb86fc;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,65 +26,100 @@
             padding: 20px;
             text-align: center;
         }
-        .lang-switch { position: absolute; top: 10px; right: 10px; }
-        button {
-            background: #333;
-            color: white;
-            border: 1px solid #555;
-            padding: 12px 20px;
-            margin: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 90%;
-            max-width: 300px;
-        }
-        button:hover { background: #444; }
-        .selection-display { font-size: 0.9rem; color: #888; margin-bottom: 20px; height: 1.2rem; }
-        #result-container {
-            margin-top: 30px;
-            padding: 20px;
+        .lang-switch { position: fixed; top: 15px; right: 15px; z-index: 100; }
+        .lang-btn {
+            background: #222;
+            color: #888;
             border: 1px solid #444;
-            border-radius: 15px;
-            background: #1a1a1a;
+            padding: 5px 12px;
+            margin-left: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .lang-btn.active { color: var(--accent); border-color: var(--accent); }
+        
+        button.choice-btn {
+            background: #252525;
+            color: white;
+            border: 1px solid #444;
+            padding: 16px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 340px;
+            transition: transform 0.1s;
+        }
+        button.choice-btn:active { transform: scale(0.98); }
+        .sub-desc { display: block; font-size: 0.85rem; color: #aaa; margin-top: 4px; }
+        
+        .selection-display { font-size: 0.8rem; color: #666; margin-bottom: 25px; min-height: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        #result-container {
+            margin-top: 20px;
+            padding: 25px;
+            border: 1px solid #333;
+            border-radius: 20px;
+            background: #181818;
             max-width: 400px;
             display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .symbol-red { color: var(--red); }
-        .symbol-green { color: var(--green); }
-        .symbol-yellow { color: var(--yellow); }
-        h1 { font-size: 1.5rem; margin-bottom: 10px; }
-        h2 { font-size: 1.2rem; margin-top: 0; }
+        .short-name { color: #888; font-size: 0.9rem; font-weight: normal; }
+        .result-val { font-size: 1.3rem; margin: 15px 0; display: block; font-weight: bold; }
+        
+        .symbol-red { border-left: 4px solid var(--red) !important; color: var(--red); }
+        .symbol-green { border-left: 4px solid var(--green) !important; color: var(--green); }
+        .symbol-yellow { border-left: 4px solid var(--yellow) !important; color: var(--yellow); }
+        
+        h1 { font-size: 1.6rem; margin-bottom: 20px; font-weight: 300; }
         .hidden { display: none; }
+        #symbols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 340px; }
     </style>
 </head>
 <body>
 
     <div class="lang-switch">
-        <button onclick="setLang('en')" style="width: auto; padding: 5px 10px;">EN</button>
-        <button onclick="setLang('ua')" style="width: auto; padding: 5px 10px;">UA</button>
+        <button id="btn-en" class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button id="btn-ua" class="lang-btn" onclick="setLang('ua')">UA</button>
     </div>
 
     <div class="selection-display" id="selection-summary"></div>
 
     <div id="step-1">
         <h1 id="title-lenses">Choose your Lens</h1>
-        <button onclick="selectLens('faith')">Faith Shift</button>
-        <button onclick="selectLens('destiny')">Destiny Switch</button>
-        <button onclick="selectLens('drug')">Psych-Drug</button>
-        <button onclick="selectLens('jungle')">Jungle Archetype</button>
+        <button class="choice-btn" onclick="selectLens('faith')">
+            <span id="name-faith">Faith Shift</span>
+            <span class="sub-desc" id="desc-faith">where your mind is going to</span>
+        </button>
+        <button class="choice-btn" onclick="selectLens('destiny')">
+            <span id="name-destiny">Destiny Switch</span>
+            <span class="sub-desc" id="desc-destiny">change your destiny</span>
+        </button>
+        <button class="choice-btn" onclick="selectLens('drug')">
+            <span id="name-drug">Psych-Drug</span>
+            <span class="sub-desc" id="desc-drug">find the solution</span>
+        </button>
+        <button class="choice-btn" onclick="selectLens('jungle')">
+            <span id="name-jungle">Jungle Archetype</span>
+            <span class="sub-desc" id="desc-jungle">discover your primal need</span>
+        </button>
     </div>
 
     <div id="step-2" class="hidden">
-        <h1 id="title-symbols">Which symbol did you land on?</h1>
-        <div id="symbols-grid">
-            </div>
+        <h1 id="title-symbols">Select your Symbol</h1>
+        <div id="symbols-grid"></div>
     </div>
 
     <div id="result-container">
-        <h2 id="result-header"></h2>
-        <p id="result-text"></p>
-        <button onclick="reset()" style="margin-top: 20px;" id="btn-restart">Restart</button>
+        <h2 id="res-lens-name"></h2>
+        <span class="short-name" id="res-short-name"></span>
+        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+        <span id="res-symbol-val" class="result-val"></span>
+        <p id="res-desc" style="line-height: 1.6; font-size: 1.05rem;"></p>
+        <button class="choice-btn" onclick="reset()" style="margin-top: 25px; border-color: #555;" id="btn-restart">Restart</button>
     </div>
 
     <script>
@@ -93,111 +129,48 @@
 
         const translations = {
             en: {
-                lenses: { faith: "Faith Shift", destiny: "Destiny Switch", drug: "Psych-Drug", jungle: "Jungle Archetype" },
                 titles: { lenses: "Choose your Lens", symbols: "Select your Symbol", restart: "Restart" },
+                lenses: {
+                    faith: { name: "Faith Shift", desc: "where your mind is going to", short: "(the realm)" },
+                    destiny: { name: "Destiny Switch", desc: "change your destiny", short: "(the path)" },
+                    drug: { name: "Psych-Drug", desc: "find the solution", short: "(the solution)" },
+                    jungle: { name: "Jungle Archetype", desc: "discover your primal need", short: "(primal need)" }
+                },
                 symbols: { 
                     flame: "Flame", sword: "Sword", mouth: "Mouth", heart: "Heart in Hand",
                     eye: "Eye", key: "Key", flower: "Flower", snake: "Snake",
                     wings: "Wings", sun: "Sun"
                 },
                 content: {
-                    flame: { faith: "Hell: Total despair. Burning karmas.", destiny: "Path of Ruin: Burn the old to start fresh.", drug: "The Incinerator: Burn attachments.", jungle: "Fire-Seeker: Needs safety/warmth." },
-                    sword: { faith: "Asura: Ego and war.", destiny: "Path of Conquest: Take what is yours.", drug: "Adrenaline: Cut through hesitation.", jungle: "The Alpha: Defend territory." },
-                    mouth: { faith: "Hunger: Unmet cravings.", destiny: "Path of Consumption: Feed ambition.", drug: "Dopamine Fix: Turn hunger into fuel.", jungle: "Predator: Needs to hunt/achieve." },
-                    heart: { faith: "Bodhisattva: Compassion.", destiny: "Path of Guardian: Protect others.", drug: "Oxytocin: Solve with empathy.", jungle: "Matriarch: Nurture the pack." },
-                    eye: { faith: "Learning: Seeking knowledge.", destiny: "Path of Scholar: Study patterns.", drug: "The Microdose: See hidden details.", jungle: "Sentinel: Watch and wait." },
-                    key: { faith: "Humanity: Logic and choice.", destiny: "Path of Opportunity: Unlock a new door.", drug: "Nootropic: Logic is the solution.", jungle: "Tool-User: Solve a puzzle." },
-                    flower: { faith: "Realization: Inner intuition.", destiny: "Path of Awakening: Let things unfold.", drug: "The Psychedelic: Dissolve ego's problem.", jungle: "Forest-Walker: Blend with nature." },
-                    snake: { faith: "Animality: Instinctual life.", destiny: "Path of Survival: Keep a low profile.", drug: "Sedative: Stop thinking; just exist.", jungle: "Coiled Hunter: Rest and strike." },
-                    wings: { faith: "Heaven: Fragile rapture.", destiny: "Path of Ascent: Rising above.", drug: "The Euphoric: Focus on the win.", jungle: "The Scout: See from the canopy." },
-                    sun: { faith: "Buddhahood: Enlightenment.", destiny: "Path of Totality: Become the Light.", drug: "The Limitless: You are the solution.", jungle: "Solar King: Simply be." }
+                    flame: { faith: "Hell: Suffering and despair.", destiny: "The Path of Rebirth: old burns down so new can come.", drug: "The Incinerator: Burn away your attachments.", jungle: "The Fire-Seeker: Warmth and safety." },
+                    sword: { faith: "Asura: Your mind is occupied by ego and competition.", destiny: "The Path of Conquest: Taking what is yours.", drug: "The Adrenaline: Cut the hesitation.", jungle: "The Alpha: Defend the territory." },
+                    mouth: { faith: "Hunger: You are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Predator: To hunt." },
+                    heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Solve it with empathy.", jungle: "The Matriarch: to nurture the pack." },
+                    eye: { faith: "Learning: You seek truth through teachings.", destiny: "The Path of the Scholar: Observe the patterns.", drug: "The Microdose: Heightened pattern recognition.", jungle: "The Sentinel: Watch and wait from the canopy." },
+                    key: { faith: "Humanity: A state of balance and reason.", destiny: "The Path of Opportunity: Unlocking a new door.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Tool-User: Solve the puzzle of survival." },
+                    flower: { faith: "Realization: Truth found through intuition.", destiny: "The Path of Awakening: Letting the truth unfold.", drug: "The Psychedelic: Dissolve the ego's problem.", jungle: "The Forest-Walker: Blend with the environment." },
+                    snake: { faith: "Animality: Driven by pure instinct.", destiny: "The Path of Survival: Keep a low profile.", drug: "The Sedative: Stop overthinking, just exist.", jungle: "The Coiled Hunter: Rest until it is time to strike." },
+                    wings: { faith: "Heaven: Fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos.", drug: "The Euphoric: Focus only on the peak.", jungle: "The Scout: Gain perspective from above." },
+                    sun: { faith: "Buddhahood: Absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light.", drug: "The Limitless: You are the solution.", jungle: "The Solar King: Simply exist as the center." }
                 }
             },
             ua: {
-                lenses: { faith: "Зсув Віри", destiny: "Перемикач Долі", drug: "Психо-Препарат", jungle: "Архетип Джунглів" },
                 titles: { lenses: "Обери Лінзу", symbols: "Обери Символ", restart: "Почати знову" },
+                lenses: {
+                    faith: { name: "Зсув Віри", desc: "куди прямує твій розум", short: "(світ)" },
+                    destiny: { name: "Перемикач Долі", desc: "зміни свою долю", short: "(шлях)" },
+                    drug: { name: "Психо-Препарат", desc: "знайди рішення", short: "(рішення)" },
+                    jungle: { name: "Архетип Джунглів", desc: "відкрий первинну потребу", short: "(первинна потреба)" }
+                },
                 symbols: { 
                     flame: "Полум'я", sword: "Меч", mouth: "Рот", heart: "Серце в руці",
                     eye: "Око", key: "Ключ", flower: "Квітка", snake: "Змія",
                     wings: "Крила", sun: "Сонце"
                 },
                 content: {
-                    flame: { faith: "Пекло: Відчай. Спалювання карми.", destiny: "Шлях Руїни: Спали старе, щоб почати.", drug: "Інцелератор: Спали прив'язаності.", jungle: "Шукач вогню: Потребує безпеки." },
-                    sword: { faith: "Асури: Его та війна.", destiny: "Шлях Завоювання: Забирай своє.", drug: "Адреналін: Ріж вагання.", jungle: "Альфа: Захищай територію." },
-                    mouth: { faith: "Голод: Ненаситність.", destiny: "Шлях Споживання: Годуй амбіції.", drug: "Дофамін: Голод як паливо.", jungle: "Хижак: Потребує полювання." },
-                    heart: { faith: "Бодхісаттва: Співчуття.", destiny: "Шлях Вартового: Захищай інших.", drug: "Окситоцин: Вирішуй емпатією.", jungle: "Матріарх: Піклуйся про зграю." },
-                    eye: { faith: "Навчання: Пошук знань.", destiny: "Шлях Вченого: Вивчай паттерни.", drug: "Мікродозинг: Бач приховані деталі.", jungle: "Вартовий: Спостерігай і чекай." },
-                    key: { faith: "Людяність: Логіка та вибір.", destiny: "Шлях Можливостей: Відкрий нові двері.", drug: "Ноотроп: Логіка - це рішення.", jungle: "Майстер: Виріши пазл." },
-                    flower: { faith: "Усвідомлення: Інтуїція.", destiny: "Шлях Пробудження: Дозволь речам бути.", drug: "Психоделік: Розчини его.", jungle: "Лісовий мандрівник: Злийся з природою." },
-                    snake: { faith: "Тваринність: Інстинкти.", destiny: "Шлях Виживання: Не виділяйся.", drug: "Седатив: Не думай, просто будь.", jungle: "Змія в засідці: Відпочинь і бий." },
-                    wings: { faith: "Небеса: Крихке захоплення.", destiny: "Шлях Сходження: Піднімись вище.", drug: "Ейфорік: Фокусуйся на радості.", jungle: "Скаут: Бач зверху." },
-                    sun: { faith: "Будда: Просвітлення.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти і є рішення.", jungle: "Сонячний Король: Просто будь." }
-                }
-            }
-        };
-
-        const symbolColors = {
-            flame: 'red', sword: 'red', mouth: 'red', heart: 'red',
-            eye: 'green', key: 'green', flower: 'green', snake: 'green',
-            wings: 'yellow', sun: 'yellow'
-        };
-
-        function setLang(lang) {
-            currentLang = lang;
-            document.getElementById('title-lenses').innerText = translations[lang].titles.lenses;
-            document.getElementById('title-symbols').innerText = translations[lang].titles.symbols;
-            document.getElementById('btn-restart').innerText = translations[lang].titles.restart;
-            updateSummary();
-            renderSymbols();
-        }
-
-        function selectLens(lens) {
-            selectedLens = lens;
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.remove('hidden');
-            updateSummary();
-            renderSymbols();
-        }
-
-        function renderSymbols() {
-            const grid = document.getElementById('symbols-grid');
-            grid.innerHTML = '';
-            Object.keys(translations[currentLang].symbols).forEach(key => {
-                const btn = document.createElement('button');
-                btn.innerText = translations[currentLang].symbols[key];
-                btn.className = `symbol-${symbolColors[key]}`;
-                btn.onclick = () => showResult(key);
-                grid.appendChild(btn);
-            });
-        }
-
-        function showResult(symbol) {
-            selectedSymbol = symbol;
-            updateSummary();
-            document.getElementById('step-2').classList.add('hidden');
-            document.getElementById('result-container').style.display = 'block';
-            
-            const header = translations[currentLang].lenses[selectedLens] + " + " + translations[currentLang].symbols[selectedSymbol];
-            document.getElementById('result-header').innerText = header;
-            document.getElementById('result-header').className = `symbol-${symbolColors[selectedSymbol]}`;
-            document.getElementById('result-text').innerText = translations[currentLang].content[selectedSymbol][selectedLens];
-        }
-
-        function updateSummary() {
-            let text = "";
-            if(selectedLens) text += translations[currentLang].lenses[selectedLens];
-            if(selectedSymbol) text += " > " + translations[currentLang].symbols[selectedSymbol];
-            document.getElementById('selection-summary').innerText = text;
-        }
-
-        function reset() {
-            selectedLens = '';
-            selectedSymbol = '';
-            document.getElementById('result-container').style.display = 'none';
-            document.getElementById('step-1').classList.remove('hidden');
-            document.getElementById('step-2').classList.add('hidden');
-            updateSummary();
-        }
-    </script>
-</body>
-</html>
+                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: старе згорає, щоб прийшло нове.", drug: "Інцелератор: Спали свої прив'язаності.", jungle: "Шукач Вогню: Тепло та безпека." },
+                    sword: { faith: "Асури: Твій розум захоплений его та суперництвом.", destiny: "Шлях Завоювання: Забирай те, що твоє.", drug: "Адреналін: Ріж вагання.", jungle: "Альфа: Захищай територію." },
+                    mouth: { faith: "Голод: Ти у світі ненаситних бажань.", destiny: "Шлях Споживання: Годуй свої амбіції.", drug: "Дофамінова підзарядка: Перетвори голод на мотивацію.", jungle: "Хижак: Щоб полювати." },
+                    heart: { faith: "Бодхісаттва: Твій розум сповнений співчуття.", destiny: "Шлях Вартового: Твоя доля зараз — захищати інших.", drug: "Окситоцин: Вирішуй емпатією.", jungle: "Матріарх: Піклуйся про зграю." },
+                    eye: { faith: "Навчання: Ти шукаєш істину в знаннях.", destiny: "Шлях Вченого: Спостерігай за паттернами.", drug: "Мікродозинг: Загострене розпізнавання образів.", jungle: "Вартовий: Спостерігай і чекай." },
+                    key: { faith: "Людяність: Стан балансу та розуму.", destiny: "Шлях Можливостей: Відмикання нових дверей.", drug: "Ноотроп: Ясність — твій інструмент.", jungle: "Майстер:
