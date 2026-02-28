@@ -82,7 +82,6 @@
         #symbols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 380px; }
         #symbols-grid button { padding: 18px 10px; font-size: 1rem; }
 
-        /* The Small Restart Button */
         .restart-btn {
             background: var(--grey-btn);
             color: var(--grey-text);
@@ -94,9 +93,8 @@
             font-size: 0.75rem;
             width: auto;
             display: inline-block;
-            transition: opacity 0.2s;
+            transition: opacity 0.5s ease;
         }
-        .restart-btn:hover { opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -143,7 +141,7 @@
     </div>
 
     <script>
-        let curLang = 'en'; let curMode = ''; let curSym = '';
+        let curLang = 'en'; let curMode = ''; let curSym = ''; let hideTimeout;
         const db = {
             en: {
                 titles: { modes: "Choose your Mode", symbols: "Select your Symbol", restart: "Restart" },
@@ -160,14 +158,14 @@
                 content: {
                     flame: { faith: "Hell: Suffering and despair.", destiny: "The Path of Rebirth: old burns down so new can come.", drug: "The Incinerator: Burn away your attachments.", jungle: "The Fire-Seeker: Warmth and safety." },
                     sword: { faith: "Asura: Your mind is occupied by ego and competition.", destiny: "The Path of Conquest: Taking what is yours.", drug: "The Adrenaline: Cut the hesitation.", jungle: "The Alpha: Defend the territory." },
-                    mouth: { faith: "Hunger: Your are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Predator: To hunt." },
+                    mouth: { faith: "Hunger: You are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Predator: To hunt." },
                     heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Solve it with empathy.", jungle: "The Matriarch: to nurture the pack." },
-                    eye: { faith: "Learning: Your mind is seeking truth through the teachings of others.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Microdose: Heightened pattern recognition and focus.", jungle: "The Sentinel: To watch and wait from the canopy." },
-                    key: { faith: "Humanity: Your mind is in a state of balance and reason.", destiny: "The Path of Opportunity: Unlocking new doors with logic.", drug: "The Nootropic: Using clarity as your primary tool.", jungle: "The Tool-User: To solve the puzzle of survival." },
-                    flower: { faith: "Realization: Your mind finds truth through solitary intuition.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Dissolving the ego to see the whole.", jungle: "The Forest-Walker: To blend seamlessly with the environment." },
-                    snake: { faith: "Animality: Your mind is driven by pure instinct and survival.", destiny: "The Path of Survival: Keeping a low profile to stay safe.", drug: "The Sedative: Stop overthinking and just exist in the now.", jungle: "The Coiled Hunter: To rest until the moment to strike." },
-                    wings: { faith: "Heaven: Your mind is in a state of fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos of the world.", drug: "The Euphoric: Focusing entirely on the peak experience.", jungle: "The Scout: To gain perspective from the highest point." },
-                    sun: { faith: "Buddhahood: Your mind is in a state of absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light that guides itself.", drug: "The Limitless: Realizing you are already the solution.", jungle: "The Solar King: To simply exist as the source." }
+                    eye: { faith: "Learning: Seeking truth through the teachings of others.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Microdose: Heightened pattern recognition and focus.", jungle: "The Sentinel: To watch and wait from the canopy." },
+                    key: { faith: "Humanity: A state of balance and reason.", destiny: "The Path of Opportunity: Unlocking new doors with logic.", drug: "The Nootropic: Using clarity as your primary tool.", jungle: "The Tool-User: To solve the puzzle of survival." },
+                    flower: { faith: "Realization: Truth through solitary intuition.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Dissolving the ego to see the whole.", jungle: "The Forest-Walker: To blend seamlessly with the environment." },
+                    snake: { faith: "Animality: Instinctual life.", destiny: "The Path of Survival: Low profile to stay safe.", drug: "The Sedative: Stop overthinking and just exist.", jungle: "The Coiled Hunter: To rest until the moment to strike." },
+                    wings: { faith: "Heaven: Fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos.", drug: "The Euphoric: Focusing entirely on the peak experience.", jungle: "The Scout: To gain perspective from the highest point." },
+                    sun: { faith: "Buddhahood: Absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light that guides itself.", drug: "The Limitless: Realizing you are already the solution.", jungle: "The Solar King: To simply exist as the source." }
                 }
             },
             ua: {
@@ -183,16 +181,16 @@
                     eye: "Око", key: "Ключ", flower: "Квітка", snake: "Змія", wings: "Крила", sun: "Сонце"
                 },
                 content: {
-                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: старе згорає, щоб прийшло нове.", drug: "Інцелератор: Спали свої прив'язаності.", jungle: "Шукач Вогню: Тепло та безпека." },
+                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: старе згорає, щоб прийшло нове.", drug: "Інцелератор: Спали прив'язаності.", jungle: "Шукач Вогню: Тепло та безпека." },
                     sword: { faith: "Асури: Твій розум захоплений его та суперництвом.", destiny: "Шлях Завоювання: Забирай те, що твоє.", drug: "Адреналін: Ріж вагання.", jungle: "Альфа: Захищай територію." },
-                    mouth: { faith: "Голод: Ти у світі ненаситних бажань.", destiny: "Шлях Споживання: Годуй свої амбіції.", drug: "Дофамін: Перетвори голод на мотивацію.", jungle: "Хижак: Щоб полювати." },
+                    mouth: { faith: "Голод: Світ ненаситних бажань.", destiny: "Шлях Споживання: Годуй амбіції.", drug: "Дофамін: Голод як мотивація.", jungle: "Хижак: Щоб полювати." },
                     heart: { faith: "Бодхісаттва: Твій розум сповнений співчуття.", destiny: "Шлях Вартового: Доля — захищати інших.", drug: "Окситоцин: Вирішуй емпатією.", jungle: "Матріарх: Піклуйся про зграю." },
-                    eye: { faith: "Навчання: Твій розум шукає істину через вчення інших.", destiny: "Шлях Вченого: Спостерігай за паттернами, щоб знайти шлях.", drug: "Мікродозинг: Загострене розпізнавання образів та фокус.", jungle: "Вартовий: Спостерігай і чекай з висоти." },
-                    key: { faith: "Людяність: Твій розум у стані балансу та розуму.", destiny: "Шлях Можливостей: Відмикання нових дверей логікою.", drug: "Ноотроп: Використання ясності як основного інструменту.", jungle: "Майстер: Виріши пазл виживання." },
-                    flower: { faith: "Усвідомлення: Твій розум знаходить істину через інтуїцію.", destiny: "Шлях Пробудження: Дозволь внутрішній істині розквітнути.", drug: "Психоделік: Розчини его, щоб побачити ціле.", jungle: "Мандрівник: Злийся з оточенням безслідно." },
-                    snake: { faith: "Тваринність: Твій розум керований чистим інстинктом.", destiny: "Шлях Виживання: Не виділяйся, щоб бути в безпеці.", drug: "Седатив: Перестань думати, просто будь у моменті.", jungle: "Змія: Відпочивай до моменту удару." },
-                    wings: { faith: "Небеса: Твій розум у стані крихкої радості.", destiny: "Шлях Сходження: Піднімись над хаосом світу.", drug: "Ейфорік: Фокусуйся лише на піковому досвіді.", jungle: "Скаут: Бач ширше з найвищої точки." },
-                    sun: { faith: "Будда: Твій розум у стані абсолютної свободи та мудрості.", destiny: "Шлях Цілісності: Стань світлом, що веде саме себе.", drug: "Безмежність: Усвідом, що ти і є рішення.", jungle: "Сонячний Король: Просто будь джерелом." }
+                    eye: { faith: "Навчання: Шукаєш істину через вчення інших.", destiny: "Шлях Вченого: Спостерігай за паттернами.", drug: "Мікродозинг: Загострене розпізнавання образів.", jungle: "Вартовий: Спостерігай і чекай." },
+                    key: { faith: "Людяність: Стан балансу та розуму.", destiny: "Шлях Можливостей: Нові двері логікою.", drug: "Ноотроп: Використання ясності.", jungle: "Майстер: Виріши пазл виживання." },
+                    flower: { faith: "Усвідомлення: Істина через інтуїцію.", destiny: "Шлях Пробудження: Дозволь істині розквітнути.", drug: "Психоделік: Розчини его.", jungle: "Мандрівник: Злийся з оточенням безслідно." },
+                    snake: { faith: "Тваринність: Керований інстинктом.", destiny: "Шлях Виживання: Не виділяйся.", drug: "Седатив: Перестань думати, просто будь.", jungle: "Змія: Відпочивай до моменту удару." },
+                    wings: { faith: "Небеса: Крихка радість.", destiny: "Шлях Сходження: Піднімись над хаосом світу.", drug: "Ейфорік: Фокусуйся лише на піку.", jungle: "Скаут: Бач ширше з висоти." },
+                    sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти і є рішення.", jungle: "Сонячний Король: Просто будь джерелом." }
                 }
             }
         };
@@ -240,6 +238,16 @@
             document.getElementById('res-symbol-val').className = `result-val symbol-${colors[s]}`;
             document.getElementById('res-desc').innerText = db[curLang].content[s][curMode];
             updateSummary();
+
+            // Handle Restart Button Fade Out
+            const btn = document.getElementById('btn-restart');
+            btn.style.opacity = '1';
+            btn.style.display = 'inline-block';
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                btn.style.opacity = '0';
+                setTimeout(() => { if(btn.style.opacity === '0') btn.style.display = 'none'; }, 500);
+            }, 10000);
         }
 
         function updateSummary() {
