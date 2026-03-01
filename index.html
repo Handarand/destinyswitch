@@ -34,14 +34,22 @@
         /* --- Fullscreen/Header Overlays --- */
         #bg-todos {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -3; opacity: 0.3; filter: saturate(0.5);
-            background: url('img/todos.png') no-repeat center; background-size: cover;
+            z-index: -3; 
+            opacity: 0.15; /* Twice less opaque than 0.3 */
+            filter: saturate(0.5);
+            background-color: white; /* Tint color */
+            background-image: url('img/todos.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            background-blend-mode: screen; /* Tint logic */
         }
         #mode-header-bg {
             position: fixed; top: -10%; left: -10%; width: 120vw; height: 50vh;
             z-index: -2; opacity: 0; transition: opacity 1s ease;
             background-size: contain; background-repeat: no-repeat; background-position: center;
             pointer-events: none;
+            filter: brightness(0) invert(1) contrast(0.5); /* Tint with white up to 50% */
         }
         #bg-symbol-icon {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -77,9 +85,9 @@
             background-size: contain; background-repeat: no-repeat;
         }
 
-        /* Symbol icons in buttons (Bigger, 30% op) */
+        /* Symbol icons in buttons (Centered, Large, Bottom-aligned) */
         .symbol-icon-overlay {
-            position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
             width: 130px; height: 130px;
             z-index: -1; opacity: 0.3; pointer-events: none;
             -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
@@ -198,7 +206,7 @@
                     heart: { faith: "Бодхісаттва: Сповнений співчуття.", destiny: "Шлях Вартового: Захищай інших.", drug: "Окситоцин: Емпатія допоможе.", jungle: "Матріарх: Піклуйся про зграю." },
                     eye: { faith: "Навчання: Пошук істини.", destiny: "Шлях Вченого: Спостерігай.", drug: "Спектр: Фокус.", jungle: "Вартовий: Спостерігай за верхівками." },
                     key: { faith: "Людяність: Стан балансу.", destiny: "Шлях Можливостей: Нові двері.", drug: "Ноотроп: Ясність.", jungle: "Енігма: Виріши загадку." },
-                    flower: { faith: "Усвідомлення: Розквіт інтуїції.", destiny: "Шлях Пробудження: Розквітай природно.", drug: "Психоделік: Розчини его.", jungle: "Аніма: Гармонія з природою." },
+                    flower: { faith: "Усвідомлення: Розквіт інтуїції.", destiny: "Шлях Пробудження: Розквітай природно.", drug: "Психоделік: Розчини ego.", jungle: "Аніма: Гармонія з природою." },
                     snake: { faith: "Тваринність: Чистий інстинкт.", destiny: "Шлях Виживання: Переживи небезпеку.", drug: "Седатив: Тиха дія.", jungle: "Змія: Животом до землі." },
                     wings: { faith: "Небеса: Крихка радість.", destiny: "Шлях Сходження: Піднімись.", drug: "Ейфорік: Побач загальну картину.", jungle: "Скаут: Бач ширше." },
                     sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти і є рішення.", jungle: "Сонячний Король: Будь центром." }
@@ -225,7 +233,7 @@
             document.getElementById('bg-todos').style.display = 'none';
             const h = document.getElementById('mode-header-bg');
             h.style.backgroundImage = `url('img/${modeIcons[m]}')`;
-            h.style.opacity = '0.2'; h.style.filter = 'saturate(0.5)';
+            h.style.opacity = '0.2'; // Keep very transparent
             updateSummary(); renderSymbols();
         }
 
@@ -248,6 +256,10 @@
         function showResult(s) {
             curSym = s; document.getElementById('step-2').classList.add('hidden');
             document.getElementById('result-container').style.display = 'block';
+            
+            // Explicitly hide mode image on last screen
+            document.getElementById('mode-header-bg').style.opacity = '0';
+
             const bg = document.getElementById('bg-symbol-icon');
             bg.className = `tint-${colors[s]}`;
             bg.style.webkitMaskImage = `url('img/${symFiles[s]}')`;
