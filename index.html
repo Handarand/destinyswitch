@@ -62,14 +62,17 @@
         /* --- Choice Buttons --- */
         .choice-btn {
             position: relative; background: var(--card); color: white;
-            border: 1px solid #2a2a2a; padding: 22px; margin: 10px 0;
-            border-radius: 18px; cursor: pointer; font-size: 1.15rem;
+            border: 1px solid #2a2a2a; padding: 25px 20px; margin: 12px 0;
+            border-radius: 18px; cursor: pointer; text-align: center;
             width: 100%; max-width: 380px; display: block; overflow: hidden; z-index: 1;
         }
         
+        /* Title text inside buttons */
+        .btn-title { display: block; font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
+
         /* Mode icons in buttons (50% sat, 30% op) */
         .mode-btn-bg {
-            position: absolute; bottom: 0; right: -10px; width: 100px; height: 100px;
+            position: absolute; bottom: 0; right: -10px; width: 110px; height: 110px;
             z-index: -1; opacity: 0.3; filter: saturate(0.5); pointer-events: none;
             background-size: contain; background-repeat: no-repeat;
         }
@@ -77,7 +80,7 @@
         /* Symbol icons in buttons (Bigger, 30% op) */
         .symbol-icon-overlay {
             position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-            width: 120px; height: 120px; /* Made Bigger */
+            width: 130px; height: 130px;
             z-index: -1; opacity: 0.3; pointer-events: none;
             -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
             -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: bottom center;
@@ -90,7 +93,7 @@
 
         #result-container {
             padding: 35px 25px; border: 1px solid #222; border-radius: 28px;
-            background: rgba(17, 17, 17, 0.7); /* 70% Opaque for see-through */
+            background: rgba(17, 17, 17, 0.7); /* 70% Opaque See-through */
             max-width: 440px; display: none; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
             backdrop-filter: blur(8px);
         }
@@ -121,28 +124,28 @@
         <button id="btn-ua" class="lang-btn" onclick="setLang('ua')">UA</button>
     </div>
 
-    <div class="summary" id="summary-text" style="color: #444; text-transform: uppercase;"></div>
+    <div class="summary" id="summary-text" style="color: #444; text-transform: uppercase; font-size: 0.7rem; margin-bottom: 20px;"></div>
 
     <div id="step-1">
         <h1 style="font-weight: 300;">Choose your Mode</h1>
         <button class="choice-btn" onclick="selectMode('faith')">
-            <span id="name-faith">Faith Shift</span>
-            <span class="sub-desc" id="desc-faith">the current realm of your mind</span>
+            <span class="btn-title" id="name-faith">Faith Shift</span>
+            <span class="sub-desc" id="desc-faith" style="font-size: 0.85rem; color: #555;">the current realm of your mind</span>
             <div class="mode-btn-bg" style="background-image: url('img/faith.png');"></div>
         </button>
         <button class="choice-btn" onclick="selectMode('destiny')">
-            <span id="name-destiny">Destiny Switch</span>
-            <span class="sub-desc" id="desc-destiny">change your destiny</span>
+            <span class="btn-title" id="name-destiny">Destiny Switch</span>
+            <span class="sub-desc" id="desc-destiny" style="font-size: 0.85rem; color: #555;">change your destiny</span>
             <div class="mode-btn-bg" style="background-image: url('img/destiny.png');"></div>
         </button>
         <button class="choice-btn" onclick="selectMode('drug')">
-            <span id="name-drug">Psychology-Enhancing Drug</span>
-            <span class="sub-desc" id="desc-drug">find the solution</span>
+            <span class="btn-title" id="name-drug">Psychology-Enhancing Drug</span>
+            <span class="sub-desc" id="desc-drug" style="font-size: 0.85rem; color: #555;">find the solution</span>
             <div class="mode-btn-bg" style="background-image: url('img/drug.png');"></div>
         </button>
         <button class="choice-btn" onclick="selectMode('jungle')">
-            <span id="name-jungle">Jungle Archetype</span>
-            <span class="sub-desc" id="desc-jungle">discover your primal need</span>
+            <span class="btn-title" id="name-jungle">Jungle Archetype</span>
+            <span class="sub-desc" id="desc-jungle" style="font-size: 0.85rem; color: #555;">discover your primal need</span>
             <div class="mode-btn-bg" style="background-image: url('img/jungle.png');"></div>
         </button>
     </div>
@@ -176,10 +179,10 @@
                     sword: { faith: "Asura: Your mind is occupied by ego and competition.", destiny: "The Path of Conquest: Taking what is yours.", drug: "The Adrenaline: Cut the hesitation.", jungle: "The Rival: To defend status and establish dominance in the hierarchy." },
                     mouth: { faith: "Hunger: You are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Devouring Scavenger: Hunt and consume to fill an infinite inner void." },
                     heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Empathy will help you prevail.", jungle: "The Matriarch: To nurture the pack." },
-                    eye: { faith: "Learning: Seeking truth.", destiny: "The Path of the Scholar: Observe patterns.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
+                    eye: { faith: "Learning: Your mind is seeking truth.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
                     key: { faith: "Humanity: State of balance.", destiny: "The Path of Opportunity: Unlocking new doors.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Enigma: Solve the inner puzzle." },
                     flower: { faith: "Realization: Blossoming truth.", destiny: "The Path of Awakening: Natural blossoming.", drug: "The Psychedelic: Dissolve the ego.", jungle: "The Anima: Find harmony." },
-                    snake: { faith: "Animality: Instinct and survival.", destiny: "The Path of Survival: Move fluidly.", drug: "The Sedative: Silent action.", jungle: "The Coiled: Belly to earth." },
+                    snake: { faith: "Animality: Instinct and survival.", destiny: "The Path of Survival: Move fluidly.", drug: "The Sedative: Silent action.", jungle: "The Coiled: Belly to earth, rest till it's safe." },
                     wings: { faith: "Heaven: Fragile rapture.", destiny: "The Path of Ascent: Rising above.", drug: "The Euphoric: See the bigger picture.", jungle: "The Scout: Perspective from high points." },
                     sun: { faith: "Buddhahood: Absolute freedom.", destiny: "The Path of Totality: Becoming the light.", drug: "The Limitless: You are the solution.", jungle: "The Solar King: Exist as the sovereign center." }
                 }
@@ -196,7 +199,7 @@
                     eye: { faith: "Навчання: Пошук істини.", destiny: "Шлях Вченого: Спостерігай.", drug: "Спектр: Фокус.", jungle: "Вартовий: Спостерігай за верхівками." },
                     key: { faith: "Людяність: Стан балансу.", destiny: "Шлях Можливостей: Нові двері.", drug: "Ноотроп: Ясність.", jungle: "Енігма: Виріши загадку." },
                     flower: { faith: "Усвідомлення: Розквіт інтуїції.", destiny: "Шлях Пробудження: Розквітай природно.", drug: "Психоделік: Розчини его.", jungle: "Аніма: Гармонія з природою." },
-                    snake: { faith: "Тваринність: Інстинкт.", destiny: "Шлях Виживання: Переживи небезпеку.", drug: "Седатив: Тиха дія.", jungle: "Змія: Животом до землі." },
+                    snake: { faith: "Тваринність: Чистий інстинкт.", destiny: "Шлях Виживання: Переживи небезпеку.", drug: "Седатив: Тиха дія.", jungle: "Змія: Животом до землі." },
                     wings: { faith: "Небеса: Крихка радість.", destiny: "Шлях Сходження: Піднімись.", drug: "Ейфорік: Побач загальну картину.", jungle: "Скаут: Бач ширше." },
                     sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти і є рішення.", jungle: "Сонячний Король: Будь центром." }
                 }
@@ -231,7 +234,7 @@
             Object.keys(db[curLang].symbols).forEach(k => {
                 const b = document.createElement('button');
                 b.className = `choice-btn symbol-${colors[k]}`;
-                b.innerHTML = `<span>${db[curLang].symbols[k]}</span>`;
+                b.innerHTML = `<span class="btn-title">${db[curLang].symbols[k]}</span>`;
                 const o = document.createElement('div');
                 o.className = `symbol-icon-overlay tint-${colors[k]}`;
                 o.style.webkitMaskImage = `url('img/${symFiles[k]}')`;
