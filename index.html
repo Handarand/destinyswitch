@@ -28,21 +28,41 @@
             margin: 0;
             padding: 20px;
             text-align: center;
+            overflow-x: hidden;
         }
+
+        /* --- Fullscreen Background Image --- */
+        #bg-icon {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            z-index: -1;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 1s ease;
+            pointer-events: none;
+            /* Mask logic for the LED effect */
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            -webkit-mask-position: center;
+            mask-position: center;
+        }
+
         .lang-switch { position: fixed; top: 15px; right: 15px; z-index: 100; }
         .lang-btn {
-            background: #111;
-            color: #333;
-            border: 1px solid #222;
-            padding: 6px 12px;
-            margin-left: 5px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
+            background: #111; color: #333; border: 1px solid #222;
+            padding: 6px 12px; margin-left: 5px; border-radius: 6px;
+            cursor: pointer; font-size: 0.75rem;
         }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
         
+        /* --- Choice Buttons with 30% Transparent Icons --- */
         .choice-btn {
+            position: relative;
             background: var(--card);
             color: white;
             border: 1px solid #2a2a2a;
@@ -54,24 +74,47 @@
             width: 100%;
             max-width: 380px;
             display: block;
-            transition: all 0.2s;
+            overflow: hidden;
+            z-index: 1;
         }
+        
+        /* The Icon inside the button */
+        .btn-icon-overlay {
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 60px; height: 60px;
+            z-index: -1;
+            opacity: 0.3; /* 30% Transparent */
+            pointer-events: none;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            -webkit-mask-position: bottom center;
+        }
+
         .choice-btn:active { transform: scale(0.97); }
         .sub-desc { display: block; font-size: 0.85rem; color: #555; margin-top: 8px; font-weight: 400; }
-        
         .summary { font-size: 0.7rem; color: #333; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; height: 1.2rem;}
         
         #result-container {
             padding: 35px 25px;
             border: 1px solid #222;
             border-radius: 28px;
-            background: #111;
+            background: rgba(17, 17, 17, 0.9); /* Slight transparency to see bg icon */
             max-width: 440px;
             display: none;
             box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
         }
         .short-name { color: #444; font-size: 0.9rem; font-style: italic; display: block; margin-top: 4px; }
         .result-val { font-size: 1.8rem; margin: 20px 0; display: block; font-weight: 900; letter-spacing: 1px; }
+        
+        /* LED tint colors */
+        .tint-red { background: linear-gradient(to top, var(--red) 0%, transparent 80%); }
+        .tint-green { background: linear-gradient(to top, var(--green) 0%, transparent 80%); }
+        .tint-yellow { background: linear-gradient(to top, var(--yellow) 0%, transparent 80%); }
         
         .symbol-red { border-bottom: 2px solid var(--red) !important; color: var(--red); }
         .symbol-green { border-bottom: 2px solid var(--green) !important; color: var(--green); }
@@ -80,26 +123,19 @@
         h1 { font-size: 1.5rem; margin-bottom: 30px; font-weight: 300; color: #eee; }
         .hidden { display: none !important; }
         #symbols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 380px; }
-        #symbols-grid button { padding: 18px 10px; font-size: 1rem; }
 
         .restart-btn {
-            background: var(--grey-btn);
-            color: var(--grey-text);
-            border: 1px solid #222;
-            padding: 6px 14px;
-            margin-top: 50px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.65rem;
-            width: auto;
-            display: none;
-            transition: opacity 0.8s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: var(--grey-btn); color: var(--grey-text); border: 1px solid #222;
+            padding: 6px 14px; margin-top: 50px; border-radius: 6px;
+            cursor: pointer; font-size: 0.65rem; width: auto;
+            display: none; transition: opacity 0.8s ease;
+            text-transform: uppercase; letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
+
+    <div id="bg-icon"></div>
 
     <div class="lang-switch">
         <button id="btn-en" class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -144,6 +180,14 @@
 
     <script>
         let curLang = 'en'; let curMode = ''; let curSym = ''; let hideTimeout;
+
+        // --- UPDATE THESE FILENAMES once you share your list ---
+        const fileNames = {
+            flame: "flame.png", sword: "sword.png", mouth: "mouth.png", heart: "heart.png",
+            eye: "eye.png", key: "key.png", flower: "flower.png", snake: "snake.png",
+            wings: "wings.png", sun: "sun.png"
+        };
+
         const db = {
             en: {
                 titles: { modes: "Choose your Mode", symbols: "Select your Symbol", restart: "Restart" },
@@ -162,12 +206,12 @@
                     sword: { faith: "Asura: Your mind is occupied by ego and competition.", destiny: "The Path of Conquest: Taking what is yours.", drug: "The Adrenaline: Cut the hesitation.", jungle: "The Rival: To defend status and establish dominance in the hierarchy." },
                     mouth: { faith: "Hunger: You are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Devouring Scavenger: Hunt and consume to fill an infinite inner void." },
                     heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Empathy will help you prevail.", jungle: "The Matriarch: To nurture the pack." },
-                    eye: { faith: "Learning: Your mind is seeking truth.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
-                    key: { faith: "Humanity: Your mind is in a state of balance and reason.", destiny: "The Path of Opportunity: Unlocking new doors.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Enigma: To solve the inner puzzle." },
-                    flower: { faith: "Realization: Your mind is blossoming through intuition.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Open up and dissolve the ego.", jungle: "The Anima: Find harmony with nature." },
-                    snake: { faith: "Animality: Your mind is driven by pure instinct and survival.", destiny: "The Path of Survival: Move fluidly, stay low, and outlast the danger.", drug: "The Sedative: Silent action is mesmerizing.", jungle: "The Coiled: Belly to earth, rest till it's safe." },
-                    wings: { faith: "Heaven: Your mind is in a state of fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos.", drug: "The Euphoric: Get higher to see the bigger picture.", jungle: "The Scout: To gain perspective from the highest point." },
-                    sun: { faith: "Buddhahood: Your mind is in a state of absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light that guides itself.", drug: "The Limitless: You are already the solution.", jungle: "The Solar King: Exist as the sovereign center." }
+                    eye: { faith: "Learning: Seeking truth through the teachings of others.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
+                    key: { faith: "Humanity: A state of balance and reason.", destiny: "The Path of Opportunity: Unlocking new doors.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Enigma: To solve the inner puzzle." },
+                    flower: { faith: "Realization: Truth blossoming naturally.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Open up and dissolve the ego.", jungle: "The Anima: Find harmony with nature." },
+                    snake: { faith: "Animality: Instinctual life and survival.", destiny: "The Path of Survival: Stay low and outlast the danger.", drug: "The Sedative: Silent action is mesmerizing.", jungle: "The Coiled: Belly to earth, rest till it's safe." },
+                    wings: { faith: "Heaven: Fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos.", drug: "The Euphoric: Get higher to see the bigger picture.", jungle: "The Scout: Perspective from the highest point." },
+                    sun: { faith: "Buddhahood: Absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light.", drug: "The Limitless: You are already the solution.", jungle: "The Solar King: Exist as the sovereign center." }
                 }
             },
             ua: {
@@ -183,16 +227,16 @@
                     eye: "Око", key: "Ключ", flower: "Квітка", snake: "Змія", wings: "Крила", sun: "Сонце"
                 },
                 content: {
-                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: ліс згорить, щоб ґрунт розквітнув.", drug: "Інцелератор: Спали свої прив'язаності.", jungle: "Опалений: Знайти безпечне тепло, не згорівши в травмі." },
-                    sword: { faith: "Асури: Твій розум захоплений его та суперництвом.", destiny: "Шлях Завоювання: Забирай те, що твоє.", drug: "Адреналін: Ріж вагання.", jungle: "Суперник: Захисти статус та встанови домінування в ієрархії." },
-                    mouth: { faith: "Голод: Ти у світі ненаситного бажання.", destiny: "Шлях Споживання: Годуй амбіції.", drug: "Дофамін: Перетвори голод на мотивацію.", jungle: "Ненаситний Падальник: Полюй та споживай, щоб заповнити нескінченну порожнечу." },
-                    heart: { faith: "Бодхісаттва: Твій розум сповнений співчуття.", destiny: "Шлях Вартового: Твоя доля зараз — захищати інших.", drug: "Окситоцин: Емпатія допоможе тобі перемогти.", jungle: "Матріарх: Піклуйся про зграю." },
-                    eye: { faith: "Навчання: Твій розум шукає істину.", destiny: "Шлях Вченого: Спостерігай за паттернами, щоб знайти шлях.", drug: "Спектр: Фокус.", jungle: "Вартовий: Спостерігай за верхівками дерев." },
-                    key: { faith: "Людяність: Твій розум у стані балансу та розуму.", destiny: "Шлях Можливостей: Відмикання нових дверей.", drug: "Ноотроп: Ясність — твій інструмент.", jungle: "Енігма: Виріши внутрішню загадку." },
-                    flower: { faith: "Усвідомлення: Твій розум розквітає через інтуїцію.", destiny: "Шлях Пробудження: Дозволь внутрішній істині розквітнути природно.", drug: "Психоделік: Відкрийся та розчини его.", jungle: "Аніма: Знайди гармонію з природою." },
-                    snake: { faith: "Тваринність: Твій розум керований чистим інстинктом та виживанням.", destiny: "Шлях Виживання: Рухайся плинно, тримайся низько та переживи небезпеку.", drug: "Седатив: Тиха дія зачаровує.", jungle: "Змія: Животом до землі, відпочивай, поки не стане безпечно." },
-                    wings: { faith: "Небеса: Твій розум у стані крихкого захоплення та радості.", destiny: "Шлях Сходження: Піднімись над хаосом.", drug: "Ейфорік: Піднімись вище, щоб побачити загальну картину.", jungle: "Скаут: Бач ширше з найвищої точки." },
-                    sun: { faith: "Будда: Абсолютна свобода та мудрість.", destiny: "Шлях Цілісності: Стань світлом, що веде саме себе.", drug: "Безмежність: Ти вже є рішенням.", jungle: "Сонячний Король: Існуй як суверенний центр." }
+                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: ліс згорить, щоб ґрунт розквітнув.", drug: "Інцелератор: Спали свої прив'язаності.", jungle: "Опалений: Знайти безпечне тепло." },
+                    sword: { faith: "Асури: Твій розум захоплений его та суперництвом.", destiny: "Шлях Завоювання: Забирай те, що твоє.", drug: "Адреналін: Ріж вагання.", jungle: "Суперник: Захисти статус." },
+                    mouth: { faith: "Голод: Ти у світі ненаситного бажання.", destiny: "Шлях Споживання: Годуй амбіції.", drug: "Дофамін: Перетвори голод на мотивацію.", jungle: "Ненаситний Падальник: Полюй." },
+                    heart: { faith: "Бодхісаттва: Твій розум сповнений співчуття.", destiny: "Шлях Вартового: Захищай інших.", drug: "Окситоцин: Емпатія допоможе.", jungle: "Матріарх: Піклуйся про зграю." },
+                    eye: { faith: "Навчання: Твій розум шукає істину.", destiny: "Шлях Вченого: Спостерігай за паттернами.", drug: "Спектр: Фокус.", jungle: "Вартовий: Спостерігай." },
+                    key: { faith: "Людяність: Твій розум у стані балансу.", destiny: "Шлях Можливостей: Нові двері.", drug: "Ноотроп: Ясність.", jungle: "Енігма: Виріши загадку." },
+                    flower: { faith: "Усвідомлення: Твій розум розквітає.", destiny: "Шлях Пробудження: Дозволь істині розквітнути.", drug: "Психоделік: Розчини его.", jungle: "Аніма: Гармонія з природою." },
+                    snake: { faith: "Тваринність: Чистий інстинкт.", destiny: "Шлях Виживання: Переживи небезпеку.", drug: "Седатив: Тиха дія зачаровує.", jungle: "Змія: Животом до землі." },
+                    wings: { faith: "Небеса: Крихке захоплення.", destiny: "Шлях Сходження: Піднімись над хаосом.", drug: "Ейфорік: Побач загальну картину.", jungle: "Скаут: Бач ширше." },
+                    sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти вже є рішенням.", jungle: "Сонячний Король: Будь центром." }
                 }
             }
         };
@@ -224,7 +268,15 @@
             Object.keys(db[curLang].symbols).forEach(k => {
                 const b = document.createElement('button');
                 b.className = `choice-btn symbol-${colors[k]}`;
-                b.innerText = db[curLang].symbols[k];
+                b.innerHTML = `<span>${db[curLang].symbols[k]}</span>`;
+                
+                // LED Masked Overlay for button
+                const overlay = document.createElement('div');
+                overlay.className = `btn-icon-overlay tint-${colors[k]}`;
+                overlay.style.webkitMaskImage = `url('img/${fileNames[k]}')`;
+                overlay.style.maskImage = `url('img/${fileNames[k]}')`;
+                
+                b.appendChild(overlay);
                 b.onclick = () => showResult(k);
                 grid.appendChild(b);
             });
@@ -233,6 +285,14 @@
         function showResult(s) {
             curSym = s; document.getElementById('step-2').classList.add('hidden');
             document.getElementById('result-container').style.display = 'block';
+            
+            // Fullscreen Background Icon Logic
+            const bgIcon = document.getElementById('bg-icon');
+            bgIcon.className = `tint-${colors[s]}`;
+            bgIcon.style.webkitMaskImage = `url('img/${fileNames[s]}')`;
+            bgIcon.style.maskImage = `url('img/${fileNames[s]}')`;
+            bgIcon.style.opacity = '0.2'; // 20% Opacity
+
             const mData = db[curLang].modes[curMode];
             document.getElementById('res-mode-name').innerText = mData.name;
             document.getElementById('res-short-name').innerText = mData.short;
@@ -242,8 +302,7 @@
             updateSummary();
 
             const btn = document.getElementById('btn-restart');
-            btn.style.opacity = '1';
-            btn.style.display = 'inline-block';
+            btn.style.opacity = '1'; btn.style.display = 'inline-block';
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
                 btn.style.opacity = '0';
@@ -259,6 +318,7 @@
 
         function reset() {
             curMode = ''; curSym = '';
+            document.getElementById('bg-icon').style.opacity = '0';
             document.getElementById('result-container').style.display = 'none';
             document.getElementById('step-1').classList.remove('hidden');
             document.getElementById('step-2').classList.add('hidden');
