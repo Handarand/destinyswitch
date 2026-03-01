@@ -31,25 +31,24 @@
             overflow-x: hidden;
         }
 
-        /* --- Fullscreen Background Image --- */
-        #bg-icon {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80vw;
-            height: 80vh;
-            z-index: -1;
-            opacity: 0; /* Hidden by default */
-            transition: opacity 1s ease;
+        /* --- Fullscreen/Header Overlays --- */
+        #bg-todos {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -3; opacity: 0.3; filter: saturate(0.5);
+            background: url('img/todos.png') no-repeat center; background-size: cover;
+        }
+        #mode-header-bg {
+            position: fixed; top: -10%; left: -10%; width: 120vw; height: 50vh;
+            z-index: -2; opacity: 0; transition: opacity 1s ease;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
             pointer-events: none;
-            /* Mask logic for the LED effect */
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-size: contain;
-            mask-size: contain;
-            -webkit-mask-position: center;
-            mask-position: center;
+        }
+        #bg-symbol-icon {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90vw; height: 90vh; z-index: -1; opacity: 0;
+            transition: opacity 1s ease; pointer-events: none;
+            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+            -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center;
         }
 
         .lang-switch { position: fixed; top: 15px; right: 15px; z-index: 100; }
@@ -60,67 +59,46 @@
         }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
         
-        /* --- Choice Buttons with 30% Transparent Icons --- */
+        /* --- Choice Buttons --- */
         .choice-btn {
-            position: relative;
-            background: var(--card);
-            color: white;
-            border: 1px solid #2a2a2a;
-            padding: 22px;
-            margin: 10px 0;
-            border-radius: 18px;
-            cursor: pointer;
-            font-size: 1.15rem;
-            width: 100%;
-            max-width: 380px;
-            display: block;
-            overflow: hidden;
-            z-index: 1;
+            position: relative; background: var(--card); color: white;
+            border: 1px solid #2a2a2a; padding: 22px; margin: 10px 0;
+            border-radius: 18px; cursor: pointer; font-size: 1.15rem;
+            width: 100%; max-width: 380px; display: block; overflow: hidden; z-index: 1;
         }
         
-        /* The Icon inside the button */
-        .btn-icon-overlay {
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 60px; height: 60px;
-            z-index: -1;
-            opacity: 0.3; /* 30% Transparent */
-            pointer-events: none;
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-size: contain;
-            mask-size: contain;
-            -webkit-mask-position: bottom center;
+        /* Mode icons in buttons (50% sat, 30% op) */
+        .mode-btn-bg {
+            position: absolute; bottom: 0; right: -10px; width: 100px; height: 100px;
+            z-index: -1; opacity: 0.3; filter: saturate(0.5); pointer-events: none;
+            background-size: contain; background-repeat: no-repeat;
         }
 
-        .choice-btn:active { transform: scale(0.97); }
-        .sub-desc { display: block; font-size: 0.85rem; color: #555; margin-top: 8px; font-weight: 400; }
-        .summary { font-size: 0.7rem; color: #333; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; height: 1.2rem;}
-        
-        #result-container {
-            padding: 35px 25px;
-            border: 1px solid #222;
-            border-radius: 28px;
-            background: rgba(17, 17, 17, 0.9); /* Slight transparency to see bg icon */
-            max-width: 440px;
-            display: none;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
+        /* Symbol icons in buttons (Bigger, 30% op) */
+        .symbol-icon-overlay {
+            position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 120px; /* Made Bigger */
+            z-index: -1; opacity: 0.3; pointer-events: none;
+            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+            -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: bottom center;
         }
-        .short-name { color: #444; font-size: 0.9rem; font-style: italic; display: block; margin-top: 4px; }
+
+        /* LED Tints */
+        .tint-red { background: linear-gradient(to top, var(--red) 0%, transparent 90%); }
+        .tint-green { background: linear-gradient(to top, var(--green) 0%, transparent 90%); }
+        .tint-yellow { background: linear-gradient(to top, var(--yellow) 0%, transparent 90%); }
+
+        #result-container {
+            padding: 35px 25px; border: 1px solid #222; border-radius: 28px;
+            background: rgba(17, 17, 17, 0.7); /* 70% Opaque for see-through */
+            max-width: 440px; display: none; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+        }
         .result-val { font-size: 1.8rem; margin: 20px 0; display: block; font-weight: 900; letter-spacing: 1px; }
-        
-        /* LED tint colors */
-        .tint-red { background: linear-gradient(to top, var(--red) 0%, transparent 80%); }
-        .tint-green { background: linear-gradient(to top, var(--green) 0%, transparent 80%); }
-        .tint-yellow { background: linear-gradient(to top, var(--yellow) 0%, transparent 80%); }
-        
         .symbol-red { border-bottom: 2px solid var(--red) !important; color: var(--red); }
         .symbol-green { border-bottom: 2px solid var(--green) !important; color: var(--green); }
         .symbol-yellow { border-bottom: 2px solid var(--yellow) !important; color: var(--yellow); }
         
-        h1 { font-size: 1.5rem; margin-bottom: 30px; font-weight: 300; color: #eee; }
         .hidden { display: none !important; }
         #symbols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 380px; }
 
@@ -129,49 +107,54 @@
             padding: 6px 14px; margin-top: 50px; border-radius: 6px;
             cursor: pointer; font-size: 0.65rem; width: auto;
             display: none; transition: opacity 0.8s ease;
-            text-transform: uppercase; letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
-    <div id="bg-icon"></div>
+    <div id="bg-todos"></div>
+    <div id="mode-header-bg"></div>
+    <div id="bg-symbol-icon"></div>
 
     <div class="lang-switch">
         <button id="btn-en" class="lang-btn active" onclick="setLang('en')">EN</button>
         <button id="btn-ua" class="lang-btn" onclick="setLang('ua')">UA</button>
     </div>
 
-    <div class="summary" id="summary-text"></div>
+    <div class="summary" id="summary-text" style="color: #444; text-transform: uppercase;"></div>
 
     <div id="step-1">
-        <h1 id="title-modes">Choose your Mode</h1>
+        <h1 style="font-weight: 300;">Choose your Mode</h1>
         <button class="choice-btn" onclick="selectMode('faith')">
             <span id="name-faith">Faith Shift</span>
             <span class="sub-desc" id="desc-faith">the current realm of your mind</span>
+            <div class="mode-btn-bg" style="background-image: url('img/faith.png');"></div>
         </button>
         <button class="choice-btn" onclick="selectMode('destiny')">
             <span id="name-destiny">Destiny Switch</span>
             <span class="sub-desc" id="desc-destiny">change your destiny</span>
+            <div class="mode-btn-bg" style="background-image: url('img/destiny.png');"></div>
         </button>
         <button class="choice-btn" onclick="selectMode('drug')">
             <span id="name-drug">Psychology-Enhancing Drug</span>
             <span class="sub-desc" id="desc-drug">find the solution</span>
+            <div class="mode-btn-bg" style="background-image: url('img/drug.png');"></div>
         </button>
         <button class="choice-btn" onclick="selectMode('jungle')">
             <span id="name-jungle">Jungle Archetype</span>
             <span class="sub-desc" id="desc-jungle">discover your primal need</span>
+            <div class="mode-btn-bg" style="background-image: url('img/jungle.png');"></div>
         </button>
     </div>
 
     <div id="step-2" class="hidden">
-        <h1 id="title-symbols">Select your Symbol</h1>
+        <h1 style="font-weight: 300;">Select your Symbol</h1>
         <div id="symbols-grid"></div>
     </div>
 
     <div id="result-container">
         <h2 id="res-mode-name" style="margin: 0; font-size: 1.4rem; font-weight: 500;"></h2>
-        <span class="short-name" id="res-short-name"></span>
+        <span id="res-short-name" style="color: #444; font-style: italic; font-size: 0.9rem;"></span>
         <div style="height: 1px; background: #222; margin: 25px 0;"></div>
         <span id="res-symbol-val" class="result-val"></span>
         <p id="res-desc" style="line-height: 1.8; font-size: 1.05rem; text-align: left; color: #888;"></p>
@@ -180,63 +163,42 @@
 
     <script>
         let curLang = 'en'; let curMode = ''; let curSym = ''; let hideTimeout;
-
-        // --- UPDATE THESE FILENAMES once you share your list ---
-        const fileNames = {
-            flame: "flame.png", sword: "sword.png", mouth: "mouth.png", heart: "heart.png",
-            eye: "eye.png", key: "key.png", flower: "flower.png", snake: "snake.png",
-            wings: "wings.png", sun: "sun.png"
-        };
-
+        const modeIcons = { faith: "faith.png", destiny: "destiny.png", drug: "drug.png", jungle: "jungle.png" };
+        const symFiles = { flame:"flame.png", sword:"sword.png", mouth:"mouth.png", heart:"heart_in_hand.png", eye:"eye.png", key:"key.png", flower:"flower.png", snake:"snake.png", wings:"wings.png", sun:"sun.png" };
+        
         const db = {
             en: {
                 titles: { modes: "Choose your Mode", symbols: "Select your Symbol", restart: "Restart" },
-                modes: {
-                    faith: { name: "Faith Shift", desc: "the current realm of your mind", short: "(the realm)" },
-                    destiny: { name: "Destiny Switch", desc: "change your destiny", short: "(the path)" },
-                    drug: { name: "Psychology-Enhancing Drug", desc: "find the solution", short: "(the solution)" },
-                    jungle: { name: "Jungle Archetype", desc: "discover your primal need", short: "(primal need)" }
-                },
-                symbols: { 
-                    flame: "Flame", sword: "Sword", mouth: "Mouth", heart: "Heart in hand",
-                    eye: "Eye", key: "Key", flower: "Flower", snake: "Snake", wings: "Wings", sun: "Sun"
-                },
+                modes: { faith: { name: "Faith Shift", desc: "the current realm of your mind", short: "(the realm)" }, destiny: { name: "Destiny Switch", desc: "change your destiny", short: "(the path)" }, drug: { name: "Psychology-Enhancing Drug", desc: "find the solution", short: "(the solution)" }, jungle: { name: "Jungle Archetype", desc: "discover your primal need", short: "(primal need)" } },
+                symbols: { flame:"Flame", sword:"Sword", mouth:"Mouth", heart:"Heart in hand", eye:"Eye", key:"Key", flower:"Flower", snake:"Snake", wings:"Wings", sun:"Sun" },
                 content: {
                     flame: { faith: "Hell: Suffering and despair.", destiny: "The Path of Rebirth: The forest will burn so the soil may flourish.", drug: "The Incinerator: Burn away your attachments.", jungle: "The Burned: To find safe warmth without being consumed by trauma." },
                     sword: { faith: "Asura: Your mind is occupied by ego and competition.", destiny: "The Path of Conquest: Taking what is yours.", drug: "The Adrenaline: Cut the hesitation.", jungle: "The Rival: To defend status and establish dominance in the hierarchy." },
                     mouth: { faith: "Hunger: You are in a realm of insatiable craving.", destiny: "The Path of Consumption: Feeding the ambition.", drug: "The Dopamine Fix: Turn hunger into motivation.", jungle: "The Devouring Scavenger: Hunt and consume to fill an infinite inner void." },
                     heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Empathy will help you prevail.", jungle: "The Matriarch: To nurture the pack." },
-                    eye: { faith: "Learning: Seeking truth through the teachings of others.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
-                    key: { faith: "Humanity: A state of balance and reason.", destiny: "The Path of Opportunity: Unlocking new doors.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Enigma: To solve the inner puzzle." },
-                    flower: { faith: "Realization: Truth blossoming naturally.", destiny: "The Path of Awakening: Letting the inner truth blossom naturally.", drug: "The Psychedelic: Open up and dissolve the ego.", jungle: "The Anima: Find harmony with nature." },
-                    snake: { faith: "Animality: Instinctual life and survival.", destiny: "The Path of Survival: Stay low and outlast the danger.", drug: "The Sedative: Silent action is mesmerizing.", jungle: "The Coiled: Belly to earth, rest till it's safe." },
-                    wings: { faith: "Heaven: Fragile rapture and joy.", destiny: "The Path of Ascent: Rising above the chaos.", drug: "The Euphoric: Get higher to see the bigger picture.", jungle: "The Scout: Perspective from the highest point." },
-                    sun: { faith: "Buddhahood: Absolute freedom and wisdom.", destiny: "The Path of Totality: Becoming the light.", drug: "The Limitless: You are already the solution.", jungle: "The Solar King: Exist as the sovereign center." }
+                    eye: { faith: "Learning: Seeking truth.", destiny: "The Path of the Scholar: Observe patterns.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
+                    key: { faith: "Humanity: State of balance.", destiny: "The Path of Opportunity: Unlocking new doors.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Enigma: Solve the inner puzzle." },
+                    flower: { faith: "Realization: Blossoming truth.", destiny: "The Path of Awakening: Natural blossoming.", drug: "The Psychedelic: Dissolve the ego.", jungle: "The Anima: Find harmony." },
+                    snake: { faith: "Animality: Instinct and survival.", destiny: "The Path of Survival: Move fluidly.", drug: "The Sedative: Silent action.", jungle: "The Coiled: Belly to earth." },
+                    wings: { faith: "Heaven: Fragile rapture.", destiny: "The Path of Ascent: Rising above.", drug: "The Euphoric: See the bigger picture.", jungle: "The Scout: Perspective from high points." },
+                    sun: { faith: "Buddhahood: Absolute freedom.", destiny: "The Path of Totality: Becoming the light.", drug: "The Limitless: You are the solution.", jungle: "The Solar King: Exist as the sovereign center." }
                 }
             },
             ua: {
                 titles: { modes: "Оберіть Режим", symbols: "Оберіть Символ", restart: "Заново" },
-                modes: {
-                    faith: { name: "Зсув Віри", desc: "світ, у якому перебуває твій розум", short: "(світ)" },
-                    destiny: { name: "Перемикач Долі", desc: "зміни свою долю", short: "(шлях)" },
-                    drug: { name: "Психологічний Препарат", desc: "знайди рішення", short: "(рішення)" },
-                    jungle: { name: "Архетип Джунглів", desc: "відкрий первинну потребу", short: "(первинна потреба)" }
-                },
-                symbols: { 
-                    flame: "Полум'я", sword: "Меч", mouth: "Рот", heart: "Серце в руці",
-                    eye: "Око", key: "Ключ", flower: "Квітка", snake: "Змія", wings: "Крила", sun: "Сонце"
-                },
+                modes: { faith: { name: "Зсув Віри", desc: "світ, у якому перебуває твій розум", short: "(світ)" }, destiny: { name: "Перемикач Долі", desc: "зміни свою долю", short: "(шлях)" }, drug: { name: "Психологічний Препарат", desc: "знайди рішення", short: "(рішення)" }, jungle: { name: "Архетип Джунглів", desc: "відкрий первинну потребу", short: "(первинна потреба)" } },
+                symbols: { flame:"Полум'я", sword:"Меч", mouth:"Рот", heart:"Серце в руці", eye:"Око", key:"Ключ", flower:"Квітка", snake:"Змія", wings:"Крила", sun:"Сонце" },
                 content: {
-                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: ліс згорить, щоб ґрунт розквітнув.", drug: "Інцелератор: Спали свої прив'язаності.", jungle: "Опалений: Знайти безпечне тепло." },
-                    sword: { faith: "Асури: Твій розум захоплений его та суперництвом.", destiny: "Шлях Завоювання: Забирай те, що твоє.", drug: "Адреналін: Ріж вагання.", jungle: "Суперник: Захисти статус." },
-                    mouth: { faith: "Голод: Ти у світі ненаситного бажання.", destiny: "Шлях Споживання: Годуй амбіції.", drug: "Дофамін: Перетвори голод на мотивацію.", jungle: "Ненаситний Падальник: Полюй." },
-                    heart: { faith: "Бодхісаттва: Твій розум сповнений співчуття.", destiny: "Шлях Вартового: Захищай інших.", drug: "Окситоцин: Емпатія допоможе.", jungle: "Матріарх: Піклуйся про зграю." },
-                    eye: { faith: "Навчання: Твій розум шукає істину.", destiny: "Шлях Вченого: Спостерігай за паттернами.", drug: "Спектр: Фокус.", jungle: "Вартовий: Спостерігай." },
-                    key: { faith: "Людяність: Твій розум у стані балансу.", destiny: "Шлях Можливостей: Нові двері.", drug: "Ноотроп: Ясність.", jungle: "Енігма: Виріши загадку." },
-                    flower: { faith: "Усвідомлення: Твій розум розквітає.", destiny: "Шлях Пробудження: Дозволь істині розквітнути.", drug: "Психоделік: Розчини его.", jungle: "Аніма: Гармонія з природою." },
-                    snake: { faith: "Тваринність: Чистий інстинкт.", destiny: "Шлях Виживання: Переживи небезпеку.", drug: "Седатив: Тиха дія зачаровує.", jungle: "Змія: Животом до землі." },
-                    wings: { faith: "Небеса: Крихке захоплення.", destiny: "Шлях Сходження: Піднімись над хаосом.", drug: "Ейфорік: Побач загальну картину.", jungle: "Скаут: Бач ширше." },
-                    sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти вже є рішенням.", jungle: "Сонячний Король: Будь центром." }
+                    flame: { faith: "Пекло: Страждання та відчай.", destiny: "Шлях Переродження: ліс згорить, щоб ґрунт розквітнув.", drug: "Інцелератор: Спали прив'язаності.", jungle: "Опалений: Знайти безпечне тепло." },
+                    sword: { faith: "Асури: Твій розум захоплений его.", destiny: "Шлях Завоювання: Забирай те, що твоє.", drug: "Адреналін: Ріж вагання.", jungle: "Суперник: Захисти статус." },
+                    mouth: { faith: "Голод: Світ ненаситного бажання.", destiny: "Шлях Споживання: Годуй амбіції.", drug: "Дофамін: Голод як мотивація.", jungle: "Ненаситний Падальник: Полюй." },
+                    heart: { faith: "Бодхісаттва: Сповнений співчуття.", destiny: "Шлях Вартового: Захищай інших.", drug: "Окситоцин: Емпатія допоможе.", jungle: "Матріарх: Піклуйся про зграю." },
+                    eye: { faith: "Навчання: Пошук істини.", destiny: "Шлях Вченого: Спостерігай.", drug: "Спектр: Фокус.", jungle: "Вартовий: Спостерігай за верхівками." },
+                    key: { faith: "Людяність: Стан балансу.", destiny: "Шлях Можливостей: Нові двері.", drug: "Ноотроп: Ясність.", jungle: "Енігма: Виріши загадку." },
+                    flower: { faith: "Усвідомлення: Розквіт інтуїції.", destiny: "Шлях Пробудження: Розквітай природно.", drug: "Психоделік: Розчини его.", jungle: "Аніма: Гармонія з природою." },
+                    snake: { faith: "Тваринність: Інстинкт.", destiny: "Шлях Виживання: Переживи небезпеку.", drug: "Седатив: Тиха дія.", jungle: "Змія: Животом до землі." },
+                    wings: { faith: "Небеса: Крихка радість.", destiny: "Шлях Сходження: Піднімись.", drug: "Ейфорік: Побач загальну картину.", jungle: "Скаут: Бач ширше." },
+                    sun: { faith: "Будда: Абсолютна свобода.", destiny: "Шлях Цілісності: Стань світлом.", drug: "Безмежність: Ти і є рішення.", jungle: "Сонячний Король: Будь центром." }
                 }
             }
         };
@@ -246,9 +208,6 @@
         function setLang(l) {
             curLang = l; document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-' + l).classList.add('active');
-            document.getElementById('title-modes').innerText = db[l].titles.modes;
-            document.getElementById('title-symbols').innerText = db[l].titles.symbols;
-            document.getElementById('btn-restart').innerText = db[l].titles.restart;
             ['faith','destiny','drug','jungle'].forEach(m => {
                 document.getElementById('name-'+m).innerText = db[l].modes[m].name;
                 document.getElementById('desc-'+m).innerText = db[l].modes[m].desc;
@@ -260,6 +219,10 @@
         function selectMode(m) {
             curMode = m; document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.remove('hidden');
+            document.getElementById('bg-todos').style.display = 'none';
+            const h = document.getElementById('mode-header-bg');
+            h.style.backgroundImage = `url('img/${modeIcons[m]}')`;
+            h.style.opacity = '0.2'; h.style.filter = 'saturate(0.5)';
             updateSummary(); renderSymbols();
         }
 
@@ -269,14 +232,11 @@
                 const b = document.createElement('button');
                 b.className = `choice-btn symbol-${colors[k]}`;
                 b.innerHTML = `<span>${db[curLang].symbols[k]}</span>`;
-                
-                // LED Masked Overlay for button
-                const overlay = document.createElement('div');
-                overlay.className = `btn-icon-overlay tint-${colors[k]}`;
-                overlay.style.webkitMaskImage = `url('img/${fileNames[k]}')`;
-                overlay.style.maskImage = `url('img/${fileNames[k]}')`;
-                
-                b.appendChild(overlay);
+                const o = document.createElement('div');
+                o.className = `symbol-icon-overlay tint-${colors[k]}`;
+                o.style.webkitMaskImage = `url('img/${symFiles[k]}')`;
+                o.style.maskImage = `url('img/${symFiles[k]}')`;
+                b.appendChild(o);
                 b.onclick = () => showResult(k);
                 grid.appendChild(b);
             });
@@ -285,22 +245,18 @@
         function showResult(s) {
             curSym = s; document.getElementById('step-2').classList.add('hidden');
             document.getElementById('result-container').style.display = 'block';
-            
-            // Fullscreen Background Icon Logic
-            const bgIcon = document.getElementById('bg-icon');
-            bgIcon.className = `tint-${colors[s]}`;
-            bgIcon.style.webkitMaskImage = `url('img/${fileNames[s]}')`;
-            bgIcon.style.maskImage = `url('img/${fileNames[s]}')`;
-            bgIcon.style.opacity = '0.2'; // 20% Opacity
-
-            const mData = db[curLang].modes[curMode];
-            document.getElementById('res-mode-name').innerText = mData.name;
-            document.getElementById('res-short-name').innerText = mData.short;
+            const bg = document.getElementById('bg-symbol-icon');
+            bg.className = `tint-${colors[s]}`;
+            bg.style.webkitMaskImage = `url('img/${symFiles[s]}')`;
+            bg.style.maskImage = `url('img/${symFiles[s]}')`;
+            bg.style.opacity = '0.2';
+            const m = db[curLang].modes[curMode];
+            document.getElementById('res-mode-name').innerText = m.name;
+            document.getElementById('res-short-name').innerText = m.short;
             document.getElementById('res-symbol-val').innerText = db[curLang].symbols[s];
             document.getElementById('res-symbol-val').className = `result-val symbol-${colors[s]}`;
             document.getElementById('res-desc').innerText = db[curLang].content[s][curMode];
             updateSummary();
-
             const btn = document.getElementById('btn-restart');
             btn.style.opacity = '1'; btn.style.display = 'inline-block';
             clearTimeout(hideTimeout);
@@ -318,7 +274,9 @@
 
         function reset() {
             curMode = ''; curSym = '';
-            document.getElementById('bg-icon').style.opacity = '0';
+            document.getElementById('bg-todos').style.display = 'block';
+            document.getElementById('mode-header-bg').style.opacity = '0';
+            document.getElementById('bg-symbol-icon').style.opacity = '0';
             document.getElementById('result-container').style.display = 'none';
             document.getElementById('step-1').classList.remove('hidden');
             document.getElementById('step-2').classList.add('hidden');
