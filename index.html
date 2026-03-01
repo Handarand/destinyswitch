@@ -35,21 +35,19 @@
         #bg-todos {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -3; 
-            opacity: 0.15; /* Twice less opaque than 0.3 */
-            filter: saturate(0.5);
-            background-color: white; /* Tint color */
+            opacity: 0.15; /* Transparent as requested */
             background-image: url('img/todos.png');
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
-            background-blend-mode: screen; /* Tint logic */
+            /* Tint and blend modes removed */
         }
         #mode-header-bg {
             position: fixed; top: -10%; left: -10%; width: 120vw; height: 50vh;
             z-index: -2; opacity: 0; transition: opacity 1s ease;
             background-size: contain; background-repeat: no-repeat; background-position: center;
             pointer-events: none;
-            filter: brightness(0) invert(1) contrast(0.5); /* Tint with white up to 50% */
+            /* White tint filter removed */
         }
         #bg-symbol-icon {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -75,17 +73,14 @@
             width: 100%; max-width: 380px; display: block; overflow: hidden; z-index: 1;
         }
         
-        /* Title text inside buttons */
         .btn-title { display: block; font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
 
-        /* Mode icons in buttons (50% sat, 30% op) */
         .mode-btn-bg {
             position: absolute; bottom: 0; right: -10px; width: 110px; height: 110px;
             z-index: -1; opacity: 0.3; filter: saturate(0.5); pointer-events: none;
             background-size: contain; background-repeat: no-repeat;
         }
 
-        /* Symbol icons in buttons (Centered, Large, Bottom-aligned) */
         .symbol-icon-overlay {
             position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
             width: 130px; height: 130px;
@@ -94,14 +89,13 @@
             -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: bottom center;
         }
 
-        /* LED Tints */
         .tint-red { background: linear-gradient(to top, var(--red) 0%, transparent 90%); }
         .tint-green { background: linear-gradient(to top, var(--green) 0%, transparent 90%); }
         .tint-yellow { background: linear-gradient(to top, var(--yellow) 0%, transparent 90%); }
 
         #result-container {
             padding: 35px 25px; border: 1px solid #222; border-radius: 28px;
-            background: rgba(17, 17, 17, 0.7); /* 70% Opaque See-through */
+            background: rgba(17, 17, 17, 0.7);
             max-width: 440px; display: none; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
             backdrop-filter: blur(8px);
         }
@@ -189,7 +183,7 @@
                     heart: { faith: "Bodhisattva: Your mind is full of compassion.", destiny: "The Path of the Guardian: Your destiny now is to protect others.", drug: "The Oxytocin: Empathy will help you prevail.", jungle: "The Matriarch: To nurture the pack." },
                     eye: { faith: "Learning: Your mind is seeking truth.", destiny: "The Path of the Scholar: Observing patterns to find the way.", drug: "The Spectrum: Focus.", jungle: "The Sentinel: Observe the canopy." },
                     key: { faith: "Humanity: State of balance.", destiny: "The Path of Opportunity: Unlocking new doors.", drug: "The Nootropic: Clarity is your tool.", jungle: "The Enigma: Solve the inner puzzle." },
-                    flower: { faith: "Realization: Blossoming truth.", destiny: "The Path of Awakening: Natural blossoming.", drug: "The Psychedelic: Dissolve the ego.", jungle: "The Anima: Find harmony." },
+                    flower: { faith: "Realization: Blossoming truth.", destiny: "The Path of Awakening: Natural blossoming.", drug: "The Psychedelic: Open up and dissolve the ego.", jungle: "The Anima: Find harmony." },
                     snake: { faith: "Animality: Instinct and survival.", destiny: "The Path of Survival: Move fluidly.", drug: "The Sedative: Silent action.", jungle: "The Coiled: Belly to earth, rest till it's safe." },
                     wings: { faith: "Heaven: Fragile rapture.", destiny: "The Path of Ascent: Rising above.", drug: "The Euphoric: See the bigger picture.", jungle: "The Scout: Perspective from high points." },
                     sun: { faith: "Buddhahood: Absolute freedom.", destiny: "The Path of Totality: Becoming the light.", drug: "The Limitless: You are the solution.", jungle: "The Solar King: Exist as the sovereign center." }
@@ -233,7 +227,7 @@
             document.getElementById('bg-todos').style.display = 'none';
             const h = document.getElementById('mode-header-bg');
             h.style.backgroundImage = `url('img/${modeIcons[m]}')`;
-            h.style.opacity = '0.2'; // Keep very transparent
+            h.style.opacity = '0.2'; 
             updateSummary(); renderSymbols();
         }
 
@@ -256,9 +250,7 @@
         function showResult(s) {
             curSym = s; document.getElementById('step-2').classList.add('hidden');
             document.getElementById('result-container').style.display = 'block';
-            
-            // Explicitly hide mode image on last screen
-            document.getElementById('mode-header-bg').style.opacity = '0';
+            document.getElementById('mode-header-bg').style.opacity = '0'; // Hidden on result
 
             const bg = document.getElementById('bg-symbol-icon');
             bg.className = `tint-${colors[s]}`;
